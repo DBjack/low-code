@@ -98,6 +98,7 @@ const Stage: React.FC = () => {
       {curComponentId && (
         <SelectedMask componentId={curComponentId} containerClassName="select-mask-container" offsetContainerClassName="stage" ref={selectedMaskRef}></SelectedMask>
       )}
+      <div className="select-mask-container"></div>
     </div>
   );
 };

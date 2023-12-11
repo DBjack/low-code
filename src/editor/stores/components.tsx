@@ -35,7 +35,7 @@ interface Action {
    */
   addComponent: (component: Component, parentId: number) => void;
 
-  setCurComponent: (componentId: number) => void;
+  setCurComponent: (componentId: string) => void;
 
   updateComponentProps: (componentId: number, props: any) => void;
 }
@@ -58,12 +58,28 @@ export const useComponets = create<State & Action>((set) => ({
       }
       return { components: [...state.components, component], curComponent: component };
     }),
-  setCurComponent: (componentId) => {
-    return { curComponentId: componentId };
-  },
+  setCurComponent: (componentId) =>
+    set((state) => {
+      console.log(123321, componentId, state.components);
+      return { curComponentId: componentId, curComponent: getComponentById(componentId, state.components) };
+    }),
   updateComponentProps: (componentId, props) =>
     set((state) => {
-      return { curComponent: { ...state.curComponent, props } };
+      const component = getComponentById(componentId, state.components);
+      if (component) {
+        component.props = { ...component.props, ...props };
+
+        if (componentId === state.curComponentId) {
+          return {
+            curComponent: component,
+            components: [...state.components]
+          };
+        }
+
+        return { components: [...state.components] };
+      }
+
+      return { components: [...state.components] };
     })
 }));
 

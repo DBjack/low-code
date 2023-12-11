@@ -41,7 +41,7 @@ const Setting: React.FC = () => {
 
   useEffect(() => {
     // 初始化表单
-    console.log(curComponent, "curComponent");
+    console.log(curComponent, "curComponent111111");
     if (curComponent?.props) {
       form.setFieldsValue(curComponent?.props);
     }

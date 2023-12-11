@@ -6,7 +6,7 @@ const Material: React.FC = () => {
   const onDragEnd = (dropResult: any) => {
     addComponent(
       {
-        id: new Date().getTime(),
+        id: String(new Date().getTime()), // 这里要转成字符串，避免后边类型判断错误
         name: dropResult.name,
         props: dropResult.props
       },

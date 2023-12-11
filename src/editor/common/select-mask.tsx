@@ -44,8 +44,6 @@ function SelectedMask({ componentId, containerClassName, offsetContainerClassNam
     // 获取容器位置
     const { top: containerTop, left: containerLeft } = container.getBoundingClientRect();
 
-    console.log(top - containerTop + container.scrollTop, left - containerLeft);
-
     // 计算位置
     setPosition({
       top: top - containerTop + container.scrollTop,
