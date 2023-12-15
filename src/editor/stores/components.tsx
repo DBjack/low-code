@@ -23,7 +23,8 @@ export interface Component {
 interface State {
   components: Component[];
   curComponentId?: number;
-  curComponent?: Component;
+  curComponent?: Component | null;
+  mode?: "edit" | "preview";
 }
 
 interface Action {
@@ -35,13 +36,16 @@ interface Action {
    */
   addComponent: (component: Component, parentId: number) => void;
 
-  setCurComponent: (componentId: string) => void;
+  setCurComponent: (componentId: number) => void;
 
   updateComponentProps: (componentId: number, props: any) => void;
+
+  setMode: (mode: "edit" | "preview") => void;
 }
 
-export const useComponets = create<State & Action>((set) => ({
+export const useComponents = create<State & Action>((set) => ({
   components: [],
+  mode: "edit",
   addComponent: (component, parentId) =>
     set((state) => {
       // 如果有上级ID，把当前组件添加到上级组件的子组件中
@@ -60,7 +64,6 @@ export const useComponets = create<State & Action>((set) => ({
     }),
   setCurComponent: (componentId) =>
     set((state) => {
-      console.log(123321, componentId, state.components);
       return { curComponentId: componentId, curComponent: getComponentById(componentId, state.components) };
     }),
   updateComponentProps: (componentId, props) =>
@@ -80,6 +83,10 @@ export const useComponets = create<State & Action>((set) => ({
       }
 
       return { components: [...state.components] };
+    }),
+  setMode: (mode) =>
+    set(() => {
+      return { mode };
     })
 }));
 

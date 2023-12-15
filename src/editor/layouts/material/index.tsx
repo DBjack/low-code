@@ -1,16 +1,17 @@
-import ComponentItem from "../../common/component-item";
-import { ItemType } from "../../item-type";
-import { useComponets } from "../../stores/components";
+import ComponentItem from "@/editor/common/component-item";
+import { ItemType } from "@/editor/item-type";
+import { useComponents } from "@/editor/stores/components";
 const Material: React.FC = () => {
-  const { addComponent } = useComponets();
+  const { addComponent } = useComponents();
   const onDragEnd = (dropResult: any) => {
+    // 添加组件, 画布会动态添加组件
     addComponent(
       {
-        id: String(new Date().getTime()), // 这里要转成字符串，避免后边类型判断错误
+        id: new Date().getTime(), // 这里要转成字符串，避免后边类型判断错误
         name: dropResult.name,
         props: dropResult.props
       },
-      dropResult.id
+      dropResult.id // 父组件id,
     );
   };
 

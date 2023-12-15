@@ -2,19 +2,19 @@
 import { Button, Input } from "antd";
 import React, { useEffect, useRef } from "react";
 import { useDrop } from "react-dnd";
-import Space from "../../components/space";
-import { ItemType } from "../../item-type";
-import { useComponets, Component } from "../../stores/components";
-import SelectedMask from "../../common/select-mask";
+import Space from "@/editor/components/Space";
+import { ItemType } from "@/editor/item-type";
+import { useComponents, Component } from "@/editor/stores/components";
+import SelectedMask from "@/editor/common/select-mask";
 const ComponentMap: { [key: string]: any } = {
   Button: Button,
   Space: Space,
   Input: Input
 };
 
-const Stage: React.FC = () => {
-  const selectedMaskRef = useRef(null);
-  const { components, setCurComponent, curComponentId } = useComponets();
+const EditStage: React.FC = () => {
+  const selectedMaskRef: any = useRef(null);
+  const { components, setCurComponent, curComponentId } = useComponents();
 
   useEffect(() => {
     function createMask(e: any) {
@@ -23,8 +23,9 @@ const Stage: React.FC = () => {
         const item = path[i];
         if (item.getAttribute) {
           if (item.getAttribute("data-component-id")) {
-            const id = item.getAttribute("data-component-id");
-            setCurComponent(id);
+            // 点击的是组件
+            const id = Number(item.getAttribute("data-component-id"));
+            setCurComponent(id); // 设置当前选中的组件
           }
         }
       }
@@ -43,11 +44,14 @@ const Stage: React.FC = () => {
     };
   }, []);
 
+  /**
+   * 更新遮罩组件位置
+   */
   useEffect(() => {
     if (selectedMaskRef?.current) {
-      selectedMaskRef?.current?.updatePosition();
+      selectedMaskRef.current?.updatePosition();
     }
-  }, [components]);
+  }, [components]); // 组件列表变化时更新遮罩位置
 
   /**
    *  渲染组件列表
@@ -56,6 +60,7 @@ const Stage: React.FC = () => {
    * @returns
    */
   function renderComponents(components: Component[]): React.ReactNode {
+    if (!components.length) return null;
     return components.map((component: Component) => {
       if (!ComponentMap[component.name]) {
         return null;
@@ -65,7 +70,7 @@ const Stage: React.FC = () => {
         return React.createElement(
           ComponentMap[component.name],
           { key: component.id, id: component.id, ...component.props, "data-component-id": component.id },
-          component.props.children || renderComponents(component.children || [])
+          component.props.children || renderComponents(component?.children || [])
         );
       }
 
@@ -75,10 +80,11 @@ const Stage: React.FC = () => {
 
   // 如果拖拽的组件是可以放置的，canDrop则为true，通过这个可以给组件添加边框
   const [{ canDrop }, drop] = useDrop(() => ({
-    // 可以接受的元素类型
+    // 可以接受的元素类型，
     accept: [ItemType.Space, ItemType.Button, ItemType.Input],
     drop: (_, monitor) => {
-      const didDrop = monitor.didDrop();
+      // 放置时执行
+      const didDrop = monitor.didDrop(); // 判断是否放置了
       if (didDrop) {
         return;
       }
@@ -88,7 +94,8 @@ const Stage: React.FC = () => {
       };
     },
     collect: (monitor) => ({
-      canDrop: monitor.canDrop()
+      // 收集信息
+      canDrop: monitor.canDrop() // 判断是否可以放置
     })
   }));
 
@@ -99,8 +106,9 @@ const Stage: React.FC = () => {
         <SelectedMask componentId={curComponentId} containerClassName="select-mask-container" offsetContainerClassName="stage" ref={selectedMaskRef}></SelectedMask>
       )}
       <div className="select-mask-container"></div>
+      {/* {React.createElement("input", {}, null)} */}
     </div>
   );
 };
 
-export default Stage;
+export default EditStage;
